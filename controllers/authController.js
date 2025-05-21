@@ -2,6 +2,42 @@ const CustomAppError = require("../utils/CustomAppError");
 const { catchAsync } = require("../utils/catchAsync");
 const roleConfig = require("../config/roleConfig");
 const mongoose = require("mongoose");
+const AuthAccount = require("../models/authAccountModel");
+const { signJWTToken } = require("../utils/jwtUtil");
+
+exports.login = catchAsync(async (req, res, next) => {
+  // can login by email or id with password
+  const {
+    email = "",
+    password = "",
+    accountID = undefined,
+    role = "",
+  } = req.body;
+
+  const userFound = await AuthAccount.findOne({
+    $or: [{ email }, { refID: accountID }],
+    role,
+  }).select("+password");
+
+  if (!userFound) return next(new CustomAppError("user not found"));
+
+  const isCorrectPassword = await userFound.isCorrectPassword(
+    password,
+    userFound.password
+  );
+
+  if (!isCorrectPassword)
+    return next(new CustomAppError("password or user id was wrong", 400));
+
+  const token = signJWTToken(userFound._id);
+  if (!token)
+    return next(new CustomAppError("generating token gone wrong", 400));
+
+  return res.status(200).json({
+    status: "success",
+    token,
+  });
+});
 
 exports.signUp = catchAsync(async (req, res, next) => {
   const { role } = req.body;
