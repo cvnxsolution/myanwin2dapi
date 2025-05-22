@@ -7,7 +7,12 @@ const { signJWTToken } = require("../utils/jwtUtil");
 
 exports.login = catchAsync(async (req, res, next) => {
   // can login by email or id with password
-  const { email = "", password = "", accountID = undefined } = req.body;
+  const {
+    email = "",
+    password = "",
+    accountID = undefined,
+    role = "",
+  } = req.body;
 
   let userFound = await AuthAccount.findOne({
     $or: [{ email }, { refID: accountID }],
@@ -27,6 +32,11 @@ exports.login = catchAsync(async (req, res, next) => {
   userFound.password = undefined;
 
   const actualRole = userFound.role;
+  if (role !== actualRole)
+    return next(
+      new CustomAppError(`there is no ${role} with registed with ${email}`),
+      400
+    );
 
   userFound = await userFound.populate({
     path: "refID",
