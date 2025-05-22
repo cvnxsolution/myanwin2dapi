@@ -14,7 +14,7 @@ exports.login = catchAsync(async (req, res, next) => {
     role = "",
   } = req.body;
 
-  const userFound = await AuthAccount.findOne({
+  let userFound = await AuthAccount.findOne({
     $or: [{ email }, { refID: accountID }],
     role,
   }).select("+password");
@@ -29,6 +29,11 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!isCorrectPassword)
     return next(new CustomAppError("password or user id was wrong", 400));
 
+  userFound = await userFound.populate({
+    path: "refID",
+    model: roleConfig[role].modelInText,
+  });
+
   const token = signJWTToken(userFound._id);
   if (!token)
     return next(new CustomAppError("generating token gone wrong", 400));
@@ -36,6 +41,7 @@ exports.login = catchAsync(async (req, res, next) => {
   return res.status(200).json({
     status: "success",
     token,
+    userFound,
   });
 });
 
