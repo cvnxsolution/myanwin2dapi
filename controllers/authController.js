@@ -15,7 +15,7 @@ exports.login = catchAsync(async (req, res, next) => {
   } = req.body;
 
   let userFound = await AuthAccount.findOne({
-    $or: [{ email }, { refID: accountID }],
+    $or: [{ email }, { accountID }],
   }).select("+password");
 
   let isCorrectPassword = undefined;

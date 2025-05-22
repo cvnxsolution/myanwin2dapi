@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const { generateRandomNumber } = require("../utils/genrateRandomNumber");
 
 const authAccountSchema = new mongoose.Schema(
   {
@@ -7,6 +9,11 @@ const authAccountSchema = new mongoose.Schema(
       type: String,
       enum: ["user", "agent", "admin"],
       required: [true, "role must be user, agent or admin"],
+    },
+    accountID: {
+      type: String,
+      trim: true,
+      unique: true,
     },
     refID: {
       type: mongoose.SchemaTypes.ObjectId,
@@ -35,6 +42,21 @@ authAccountSchema.methods.isCorrectPassword = async function (
 ) {
   return await bcrypt.compare(userPassword, hashedPassword);
 };
+
+authAccountSchema.pre("save", async function (next) {
+  if (this.isNew && !this.accountID) {
+    let isUnique = false;
+    while (!isUnique) {
+      const randomID = generateRandomNumber(3);
+      const exists = await AuthAccount.findOne({ accountID: randomID });
+      if (!exists) {
+        this.accountID = randomID;
+        isUnique = true;
+      }
+    }
+  }
+  next();
+});
 
 authAccountSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
