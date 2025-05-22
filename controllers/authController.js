@@ -7,34 +7,33 @@ const { signJWTToken } = require("../utils/jwtUtil");
 
 exports.login = catchAsync(async (req, res, next) => {
   // can login by email or id with password
-  const {
-    email = "",
-    password = "",
-    accountID = undefined,
-    role = "",
-  } = req.body;
+  const { email = "", password = "", accountID = undefined } = req.body;
 
   let userFound = await AuthAccount.findOne({
     $or: [{ email }, { refID: accountID }],
-    role,
   }).select("+password");
 
-  if (!userFound) return next(new CustomAppError("user not found"));
+  let isCorrectPassword = undefined;
+  if (userFound) {
+    isCorrectPassword = await userFound.isCorrectPassword(
+      password,
+      userFound.password
+    );
+  }
 
-  const isCorrectPassword = await userFound.isCorrectPassword(
-    password,
-    userFound.password
-  );
+  if (!userFound || !isCorrectPassword)
+    return next(new CustomAppError("Invalid credentials", 400));
 
-  if (!isCorrectPassword)
-    return next(new CustomAppError("password or user id was wrong", 400));
+  userFound.password = undefined;
+
+  const actualRole = userFound.role;
 
   userFound = await userFound.populate({
     path: "refID",
-    model: roleConfig[role].modelInText,
+    model: roleConfig[actualRole].modelInText,
   });
 
-  const token = signJWTToken(userFound._id);
+  const token = signJWTToken(userFound._id, userFound.role);
   if (!token)
     return next(new CustomAppError("generating token gone wrong", 400));
 
@@ -46,10 +45,13 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.signUp = catchAsync(async (req, res, next) => {
-  const { role } = req.body;
-
+  const role = "user";
   const session = await mongoose.startSession();
   session.startTransaction();
+
+  if (req.body.role && req.body.role !== "user") {
+    console.warn("Suspicious role override attempt:", req.body.role);
+  }
 
   try {
     const config = roleConfig[role];
@@ -75,6 +77,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
       authAccountFields[field] = req.body[field];
     }
 
+    authAccountFields["role"] = role;
+
     const [authAccount] = await roleConfig.authAccount.model.create(
       [authAccountFields],
       { session }
@@ -90,7 +94,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
     });
   } catch (err) {
     await session.abortTransaction();
-    session.endSession();
     return next(err);
+  } finally {
+    session.endSession();
   }
 });
