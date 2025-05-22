@@ -71,13 +71,13 @@ exports.signUp = catchAsync(async (req, res, next) => {
     req.body.refID = domainUser._id;
 
     const authAccountFields = {};
+    req.body.role = role;
+
     for (const field of roleConfig.authAccount.requiredFields) {
       if (!req.body[field])
         throw new CustomAppError(`Missing auth field: ${field}`, 400);
       authAccountFields[field] = req.body[field];
     }
-
-    authAccountFields["role"] = role;
 
     const [authAccount] = await roleConfig.authAccount.model.create(
       [authAccountFields],
