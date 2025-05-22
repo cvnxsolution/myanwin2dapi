@@ -17,7 +17,7 @@ module.exports = {
   user: {
     modelInText: "User",
     model: User,
-    requiredFields: ["name", "email", "password", "confirmPassword", "role"],
+    requiredFields: ["name", "email", "password", "confirmPassword"],
   },
   authAccount: {
     model: AuthAccount,
