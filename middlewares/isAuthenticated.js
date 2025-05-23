@@ -7,7 +7,7 @@ const User = require("../models/userModel");
 const roleModelMapper = require("../config/roleConfig");
 
 exports.isAuthenticated = catchAsync(async (req, res, next) => {
-  const header = req.header.authorization;
+  const header = req.headers.authorization;
   if (!header) return next(new CustomAppError("no token in header"), 401);
 
   const token = req.headers.authorization.split(" ")[1];
