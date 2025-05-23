@@ -18,6 +18,17 @@ module.exports = {
     modelInText: "User",
     model: User,
     requiredFields: ["name", "email", "password", "confirmPassword"],
+    authContextBuilder: (authAccount, account) => ({
+      auth_id: authAccount._id,
+      account_id:
+        authAccount.refID && authAccount.refID._id
+          ? authAccount.refID._id
+          : authAccount.refID,
+      accountID: authAccount.accountID,
+      email: authAccount.email,
+      name: account.name,
+      balance: account.balance,
+    }),
   },
   authAccount: {
     model: AuthAccount,
