@@ -4,12 +4,18 @@ const handleJWTError = (err) => {
   return new CustomAppError(err.message, 400);
 };
 
-const sendErrorInDevelopment = (error, res) => {
-  error.statusCode = error.statusCode || 500;
-  return res.status(error.statusCode).json({
-    status: error.status,
-    message: error.message,
-    stack: error.stack,
+const handleDuplicateKeyError = (err) => {
+  const key = Object.keys(err.keyValue)[0];
+  const value = err.keyValue[key];
+  return new CustomAppError(`${value} exists in database`, 400);
+};
+
+const sendErrorInDevelopment = (err, res) => {
+  err.statusCode = err.statusCode || 500;
+  return res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+    stack: err.stack,
   });
 };
 
@@ -34,10 +40,16 @@ const globalErrorHandler = (err, req, res, next) => {
       error = handleJWTError(err);
       break;
   }
-  error = { ...error, stack: err.stack, message: err.message };
+
+  // mongoose error
+  switch (err.code) {
+    case 11000: {
+      error = handleDuplicateKeyError(err);
+    }
+  }
 
   if (process.env.NODE_ENV === "development") {
-    sendErrorInDevelopment(error, res);
+    sendErrorInDevelopment(err, res);
   } else if (process.env.NODE_ENV === "production") {
     sendErorrInProduction(error, res);
   }
