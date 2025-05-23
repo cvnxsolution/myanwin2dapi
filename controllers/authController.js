@@ -43,14 +43,30 @@ exports.login = catchAsync(async (req, res, next) => {
     model: roleConfig[actualRole].modelInText,
   });
 
-  const token = signJWTToken(userFound._id, userFound.role);
+  if (!userFound.refID || !userFound.refID._id) {
+    console.warn(
+      `Orphan AuthAccount found. Email: ${email}, Role: ${actualRole}`
+    );
+    return next(
+      new CustomAppError(
+        "Authentication failed: linked user data missing.",
+        400
+      )
+    );
+  }
+
+  const token = signJWTToken(
+    userFound._id,
+    userFound.role,
+    0,
+    userFound.refID._id
+  );
   if (!token)
     return next(new CustomAppError("generating token gone wrong", 400));
 
   return res.status(200).json({
     status: "success",
     token,
-    userFound,
   });
 });
 
@@ -73,6 +89,11 @@ exports.signUp = catchAsync(async (req, res, next) => {
         throw new CustomAppError(`Missing required field: ${field}`, 400);
       domainUserFields[field] = req.body[field];
     }
+
+    // Security: Prevent user-defined initial balance via request payload.
+    // Although roleConfig.js enforces field whitelisting, this is explicitly set
+    // as a defense-in-depth measure to guarantee zero starting balance.
+    domainUserFields.balance = 0;
 
     const [domainUser] = await config.model.create([domainUserFields], {
       session,
@@ -99,8 +120,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
     return res.status(201).json({
       status: "success",
-      user: domainUser,
-      centralUser: authAccount,
+      domainUser,
+      authAccount,
     });
   } catch (err) {
     await session.abortTransaction();
@@ -108,4 +129,14 @@ exports.signUp = catchAsync(async (req, res, next) => {
   } finally {
     session.endSession();
   }
+});
+
+exports.getAllAuthAccounts = catchAsync(async (req, res, next) => {
+  const authAccounts = await AuthAccount.find();
+
+  return res.status(200).json({
+    status: "success",
+    message: "all authAccount are fetched",
+    authAccounts,
+  });
 });
