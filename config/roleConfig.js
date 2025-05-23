@@ -7,17 +7,27 @@ module.exports = {
   agent: {
     modelInText: "Agent",
     model: Agent,
-    requiredFields: ["name", "email", "password", "confirmPassword", "role"],
+    requiredFields: ["name"],
+    authContextBuilder: (authAccount, account) => ({
+      auth_id: authAccount._id,
+      account_id:
+        authAccount.refID && authAccount.refID._id
+          ? authAccount.refID._id
+          : authAccount.refID,
+      accountID: authAccount.accountID,
+      role: authAccount.role,
+      name: account.name,
+    }),
   },
   admin: {
     modelInText: "Admin",
     model: Admin,
-    requiredFields: ["name", "email", "password", "confirmPassword", "role"],
+    requiredFields: ["name"],
   },
   user: {
     modelInText: "User",
     model: User,
-    requiredFields: ["name", "email", "password", "confirmPassword"],
+    requiredFields: ["name"],
     authContextBuilder: (authAccount, account) => ({
       auth_id: authAccount._id,
       account_id:
