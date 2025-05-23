@@ -5,6 +5,7 @@ const handleJWTError = (err) => {
 };
 
 const sendErrorInDevelopment = (error, res) => {
+  error.statusCode = error.statusCode || 500;
   return res.status(error.statusCode).json({
     status: error.status,
     message: error.message,
