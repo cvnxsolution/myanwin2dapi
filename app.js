@@ -3,7 +3,9 @@ const morgan = require("morgan");
 const cors = require("cors");
 const globalErrorHandler = require("./controllers/errorController");
 const authRoute = require("./routes/authRoute");
-const CustomAppError = require("./utils/CustomAppError");
+const agentRoute = require("./routes/agentRoute");
+const userRoute = require("./routes/userRoute");
+const { isAuthenticated } = require("./middlewares/isAuthenticated");
 
 const app = express();
 
@@ -12,6 +14,8 @@ app.use(express.json());
 
 app.use(cors());
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/agent", isAuthenticated, agentRoute);
 
 app.use(globalErrorHandler);
 
