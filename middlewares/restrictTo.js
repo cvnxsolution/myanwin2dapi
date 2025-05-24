@@ -1,9 +1,10 @@
 const CustomAppError = require("../utils/CustomAppError");
 
-exports.restrictTo = (message, role) => {
+exports.restrictTo = (message, ...roles) => {
   return (req, res, next) => {
-    if (req.user.role !== role) {
-      return next(new CustomAppError(message, 401));
+    const userRole = req.user.role;
+    if (!roles.includes(userRole)) {
+      return next(new CustomAppError(message, 403));
     }
     next();
   };
