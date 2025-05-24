@@ -1,7 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const { isAuthenticated } = require("../middlewares/isAuthenticated");
+const { restrictTo } = require("../middlewares/restrictTo");
 
-router.route("/").get(userController.getAllUsers);
+router.use(isAuthenticated);
+
+router
+  .route("/")
+  .get(
+    restrictTo("Only admins are allowed", "admin"),
+    userController.getAllUsers
+  );
+
+router.route("/me").get(isAuthenticated, userController.me);
 
 module.exports = router;
