@@ -23,6 +23,17 @@ module.exports = {
     modelInText: "Admin",
     model: Admin,
     requiredFields: ["name"],
+    authContextBuilder: (authAccount, account) => ({
+      auth_id: authAccount._id,
+      account_id:
+        authAccount.refID && authAccount.refID._id
+          ? authAccount.refID._id
+          : authAccount.refID,
+      accountID: authAccount.accountID,
+      email: authAccount.email,
+      name: account.name,
+      role: authAccount.role,
+    }),
   },
   user: {
     modelInText: "User",
