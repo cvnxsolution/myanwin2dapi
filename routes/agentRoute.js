@@ -9,14 +9,19 @@ router.use(isAuthenticated);
 
 router.post(
   "/deposit",
-  restrictTo("only agents are allowed"),
+  restrictTo("only agents are allowed", "agent"),
   agentController.deposit
 );
 
 router
   .route("/")
-  .all(restrictTo("only admins are allowed", "admin"))
-  .get(agentController.getAllAgents)
-  .post(agentController.createAgent);
+  .get(
+    restrictTo("Only admins are allowed", "admin"),
+    agentController.getAllAgents
+  )
+  .post(
+    restrictTo("Only admins are allowed", "admin"),
+    agentController.createAgent
+  );
 
 module.exports = router;
