@@ -10,3 +10,12 @@ exports.loginLimiter = rateLimit.rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+exports.signUpLimiter = rateLimit.rateLimit({
+  windowMs: 10 * 1000 * 60,
+  max: 5,
+  message: {
+    status: "fail",
+    message: "Too many sign up attempts, try again in 5 minutes",
+  },
+});
