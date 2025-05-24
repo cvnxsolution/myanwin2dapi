@@ -23,6 +23,8 @@ exports.isAuthenticated = catchAsync(async (req, res, next) => {
 
   const actualRole = authAccount.role;
   const Model = roleModelMapper[actualRole].model;
+  if (!Model) return next(new CustomAppError("Unknown role", 403));
+  
   const account = await Model.findById(user_id);
 
   if (!account) return next(new CustomAppError("account is missing", 401));
