@@ -16,3 +16,24 @@ exports.me = (req, res, next) => {
     data: req.user,
   });
 };
+
+exports.getUserByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one user is fetched",
+  });
+});
+
+exports.updateUserByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one user is updated",
+  });
+});
+
+exports.deleteUserByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one user is delected",
+  });
+});

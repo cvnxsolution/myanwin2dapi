@@ -13,6 +13,21 @@ router
     userController.getAllUsers
   );
 
+router
+  .route("/:id")
+  .get(
+    restrictTo("Only admins are allowed", "admin"),
+    userController.getUserByID
+  )
+  .delete(
+    restrictTo("Only admins are allowed", "admin"),
+    userController.deleteUserByID
+  )
+  .patch(
+    restrictTo("Only admins are allowed", "admin"),
+    userController.updateUserByID
+  );
+
 router.route("/me").get(isAuthenticated, userController.me);
 
 module.exports = router;
