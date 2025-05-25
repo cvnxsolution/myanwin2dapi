@@ -99,3 +99,24 @@ exports.createAgent = catchAsync(async (req, res, next) => {
     session.endSession();
   }
 });
+
+exports.getAgentByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one agent is fetched",
+  });
+});
+
+exports.updateAgentByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one agent is updated",
+  });
+});
+
+exports.deleteAgentByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one agent is delected",
+  });
+});

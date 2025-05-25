@@ -24,4 +24,19 @@ router
     agentController.createAgent
   );
 
+router
+  .route("/:id")
+  .get(
+    restrictTo("Only admins are allowed", "admin"),
+    agentController.getAgentByID
+  )
+  .delete(
+    restrictTo("Only admins are allowed", "admin"),
+    agentController.deleteAgentByID
+  )
+  .patch(
+    restrictTo("Only admins are allowed", "admin"),
+    agentController.updateAgentByID
+  );
+
 module.exports = router;
