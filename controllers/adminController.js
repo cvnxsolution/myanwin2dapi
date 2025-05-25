@@ -74,3 +74,27 @@ exports.getAllAdmin = catchAsync(async (req, res, next) => {
     admins,
   });
 });
+
+exports.getAdminByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one admin is fetched",
+  });
+});
+
+exports.updateAdminByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one admin is updated",
+  });
+});
+
+exports.deleteAdminByID = catchAsync(async (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    message: "one admin is delected",
+  });
+});
+
+
+
