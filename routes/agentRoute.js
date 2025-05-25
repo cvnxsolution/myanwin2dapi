@@ -39,4 +39,6 @@ router
     agentController.updateAgentByID
   );
 
+router.route("/me", isAuthenticated, agentController.getMyInformation);
+
 module.exports = router;

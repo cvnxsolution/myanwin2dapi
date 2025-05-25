@@ -120,3 +120,10 @@ exports.deleteAgentByID = catchAsync(async (req, res, next) => {
     message: "one agent is delected",
   });
 });
+
+exports.getMyInformation = (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    data: req.user,
+  });
+};
