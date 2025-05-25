@@ -96,5 +96,9 @@ exports.deleteAdminByID = catchAsync(async (req, res, next) => {
   });
 });
 
-
-
+exports.getMyInformation = (req, res, next) => {
+  return res.status(200).json({
+    status: "success",
+    data: req.user,
+  });
+};

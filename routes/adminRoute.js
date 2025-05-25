@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const adminController = require("../controllers/adminController");
+const { isAuthenticated } = require("../middlewares/isAuthenticated");
 
 router
   .route("/")
   .post(adminController.createAdmin)
   .get(adminController.getAllAdmin);
+
+router.route("/me", isAuthenticated, adminController.getMyInformation);
 
 router
   .route("/:id")
