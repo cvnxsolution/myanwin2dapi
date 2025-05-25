@@ -28,6 +28,6 @@ router
     userController.updateUserByID
   );
 
-router.route("/me").get(isAuthenticated, userController.me);
+router.route("/me").get(isAuthenticated, userController.getMyInformation);
 
 module.exports = router;
