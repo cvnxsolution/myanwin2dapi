@@ -9,6 +9,7 @@ const authRoute = require("./routes/authRoute");
 const agentRoute = require("./routes/agentRoute");
 const userRoute = require("./routes/userRoute");
 const adminRoute = require("./routes/adminRoute");
+const betRoute = require("./routes/betRoute");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/agent", agentRoute);
 app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/bet", betRoute);
 
 app.use(globalErrorHandler);
 
