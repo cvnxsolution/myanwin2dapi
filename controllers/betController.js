@@ -50,3 +50,12 @@ exports.getAllBet = catchAsync(async (req, res, next) => {
     bets,
   });
 });
+
+exports.deleteAllBet = catchAsync(async (req, res, next) => {
+  const bets = await Bet.deleteMany({});
+  return res.status(200).json({
+    status: "success",
+    message: "all bets deleted",
+    bets,
+  });
+});
