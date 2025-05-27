@@ -41,3 +41,12 @@ exports.createBet = catchAsync(async (req, res, next) => {
     message: "one bet record has been created",
   });
 });
+
+exports.getAllBet = catchAsync(async (req, res, next) => {
+  const bets = await Bet.find();
+  return res.status(200).json({
+    status: "success",
+    message: "all bets fetched",
+    bets,
+  });
+});
