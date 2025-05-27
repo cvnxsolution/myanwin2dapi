@@ -10,6 +10,11 @@ router
     isAuthenticated,
     restrictTo("only users are allowed", "user"),
     betController.createBet
+  )
+  .get(
+    isAuthenticated,
+    restrictTo("only users are allowed", "user"),
+    betController.getAllBet
   );
 
 module.exports = router;
