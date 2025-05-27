@@ -3,6 +3,7 @@ const router = express.Router();
 
 const adminController = require("../controllers/adminController");
 const { isAuthenticated } = require("../middlewares/isAuthenticated");
+const { restrictTo } = require("../middlewares/restrictTo");
 
 router
   .route("/")
