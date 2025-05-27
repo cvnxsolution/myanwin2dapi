@@ -22,4 +22,17 @@ router
     betController.deleteAllBet
   );
 
+router
+  .route("/:id")
+  .get(
+    isAuthenticated,
+    restrictTo("only users are allowed", "user"),
+    betController.getBetByID
+  )
+  .delete(
+    isAuthenticated,
+    restrictTo("only users are allowed", "user"),
+    betController.deleteBetByID
+  );
+
 module.exports = router;
