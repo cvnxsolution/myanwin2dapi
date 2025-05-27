@@ -20,6 +20,10 @@ const betSchema = new mongoose.Schema({
     enum: ["pending", "win", "lose"],
     default: "pending",
   },
+  drawTime: {
+    type: String,
+    enum: ["12:01 PM", "4:30 PM"],
+  },
   date: {
     type: Date,
     default: Date.now,
@@ -28,6 +32,10 @@ const betSchema = new mongoose.Schema({
 
 betSchema.index({ date: 1, number: 1 });
 betSchema.index({ refID: 1, date: 1 });
+
+betSchema.pre("save", function (next) {
+  next();
+});
 
 const Bet = mongoose.model("Bet", betSchema);
 
