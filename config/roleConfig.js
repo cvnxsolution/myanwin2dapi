@@ -1,6 +1,7 @@
 const Admin = require("../models/adminModel");
 const Agent = require("../models/agentModel");
 const AuthAccount = require("../models/authAccountModel");
+const Bet = require("../models/betModel");
 const User = require("../models/userModel");
 
 module.exports = {
@@ -49,10 +50,15 @@ module.exports = {
       email: authAccount.email,
       name: account.name,
       balance: account.balance,
+      role: authAccount.role,
     }),
   },
   authAccount: {
     model: AuthAccount,
     requiredFields: ["role", "password", "confirmPassword", "email", "refID"],
+  },
+  bet: {
+    model: Bet,
+    requiredFields: ["refID", "amount", "number", "requestSentTime"],
   },
 };
