@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const AuthAccount = require("../models/authAccountModel");
 const { signJWTToken } = require("../utils/jwtUtil");
 const factory = require("./handlerFactory");
+const { createUserWithAuth } = require("../services/user.service");
 
 exports.login = catchAsync(async (req, res, next) => {
   // can login by email or id with password
@@ -72,64 +73,13 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.signUp = catchAsync(async (req, res, next) => {
-  const role = "user";
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const { domainUser, authAccount } = await createUserWithAuth(req);
 
-  if (req.body.role && req.body.role !== "user") {
-    console.warn("Suspicious role override attempt:", req.body.role);
-  }
-
-  try {
-    const config = roleConfig[role];
-    if (!config) throw new CustomAppError("Invalid role specified", 400);
-
-    const domainUserFields = {};
-    for (const field of config.requiredFields) {
-      if (!req.body[field])
-        throw new CustomAppError(`Missing required field: ${field}`, 400);
-      domainUserFields[field] = req.body[field];
-    }
-
-    // Security: Prevent user-defined initial balance via request payload.
-    // Although roleConfig.js enforces field whitelisting, this is explicitly set
-    // as a defense-in-depth measure to guarantee zero starting balance.
-    domainUserFields.balance = 0;
-
-    const [domainUser] = await config.model.create([domainUserFields], {
-      session,
-    });
-
-    req.body.refID = domainUser._id;
-
-    const authAccountFields = {};
-    req.body.role = role;
-
-    for (const field of roleConfig.authAccount.requiredFields) {
-      if (!req.body[field])
-        throw new CustomAppError(`Missing auth field: ${field}`, 400);
-      authAccountFields[field] = req.body[field];
-    }
-
-    const [authAccount] = await roleConfig.authAccount.model.create(
-      [authAccountFields],
-      { session }
-    );
-
-    await session.commitTransaction();
-    session.endSession();
-
-    return res.status(201).json({
-      status: "success",
-      domainUser,
-      authAccount,
-    });
-  } catch (err) {
-    await session.abortTransaction();
-    return next(err);
-  } finally {
-    session.endSession();
-  }
+  return res.status(201).json({
+    status: "success",
+    domainUser,
+    authAccount,
+  });
 });
 
 const roleMapper = roleConfig["authAccount"];
