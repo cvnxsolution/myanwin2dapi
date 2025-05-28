@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 
 const { catchAsync } = require("../utils/catchAsync");
-const roleModelMapper = require("../config/roleConfig");
 const roleConfig = require("../config/roleConfig");
 const CustomAppError = require("../utils/CustomAppError");
 const AuthAccount = require("../models/authAccountModel");
+const factory = require("./handlerFactory");
+const Admin = require("../models/adminModel");
+const roleModelMapper = require("../config/roleConfig");
 
 exports.createAdmin = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -65,40 +67,12 @@ exports.createAdmin = catchAsync(async (req, res, next) => {
     session.endSession();
   }
 });
+const roleMapper = roleModelMapper["admin"];
 
-exports.getAllAdmin = catchAsync(async (req, res, next) => {
-  const admins = await AuthAccount.find();
-  return res.status(200).json({
-    status: "success",
-    message: "all admin fetched",
-    admins,
-  });
-});
+exports.getAllAdmin = factory.getAll(roleMapper);
 
-exports.getAdminByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one admin is fetched",
-  });
-});
+exports.getAdminByID = factory.getOne(roleMapper);
+exports.updateAdminByID = factory.updateOne(roleMapper);
+exports.deleteAdminByID = factory.deleteOne(roleMapper);
 
-exports.updateAdminByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one admin is updated",
-  });
-});
-
-exports.deleteAdminByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one admin is delected",
-  });
-});
-
-exports.getMyInformation = (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    data: req.user,
-  });
-};
+exports.getMyInformation = factory.getMe();
