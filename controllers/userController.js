@@ -1,39 +1,10 @@
-const User = require("../models/userModel");
-const { catchAsync } = require("../utils/catchAsync");
+const factory = require("./handlerFactory");
+const roleModelMapper = require("../config/roleConfig");
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  return res.status(200).json({
-    status: "success",
-    message: "all user fetched",
-    users,
-  });
-});
+const roleMapper = roleModelMapper["user"];
 
-exports.getMyInformation = (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    data: req.user,
-  });
-};
-
-exports.getUserByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one user is fetched",
-  });
-});
-
-exports.updateUserByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one user is updated",
-  });
-});
-
-exports.deleteUserByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one user is delected",
-  });
-});
+exports.getAllUsers = factory.getAll(roleMapper);
+exports.getMyInformation = factory.getMe();
+exports.getUserByID = factory.getOne(roleMapper);
+exports.updateUserByID = factory.updateOne(roleMapper);
+exports.deleteUserByID = factory.deleteOne(roleMapper);

@@ -3,6 +3,7 @@ const { catchAsync } = require("../utils/catchAsync");
 const roleModelMapper = require("../config/roleConfig");
 const CustomAppError = require("../utils/CustomAppError");
 const { getCutoffTime } = require("../utils/getCutoffTime");
+const factory = require("./handlerFactory");
 
 exports.createBet = catchAsync(async (req, res, next) => {
   const filteredFields = {};
@@ -42,34 +43,9 @@ exports.createBet = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllBet = catchAsync(async (req, res, next) => {
-  const bets = await Bet.find();
-  return res.status(200).json({
-    status: "success",
-    message: "all bets fetched",
-    bets,
-  });
-});
+const roleMapper = roleModelMapper["bet"];
 
-exports.deleteAllBet = catchAsync(async (req, res, next) => {
-  const bets = await Bet.deleteMany({});
-  return res.status(200).json({
-    status: "success",
-    message: "all bets deleted",
-    bets,
-  });
-});
-
-exports.getBetByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one admin is delected",
-  });
-});
-
-exports.deleteBetByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one admin is delected",
-  });
-});
+exports.getAllBet = factory.getAll(roleMapper);
+exports.deleteAllBet = factory.deleteAll(roleMapper);
+exports.getBetByID = factory.getOne(roleMapper);
+exports.deleteBetByID = factory.deleteOne(roleMapper);
