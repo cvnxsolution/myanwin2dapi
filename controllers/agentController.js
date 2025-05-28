@@ -5,6 +5,7 @@ const CustomAppError = require("../utils/CustomAppError");
 const User = require("../models/userModel");
 const roleModelMapper = require("../config/roleConfig");
 const mongoose = require("mongoose");
+const factory = require("./handlerFactory");
 
 exports.deposit = catchAsync(async (req, res, next) => {
   const { depoAccountID = "", amount = "" } = req.body;
@@ -26,15 +27,6 @@ exports.deposit = catchAsync(async (req, res, next) => {
     status: "scucess",
     message: "deposited",
     account,
-  });
-});
-
-exports.getAllAgents = catchAsync(async (req, res, next) => {
-  const agents = await Agent.find();
-  return res.status(200).json({
-    status: "success",
-    message: "all agents fetched",
-    agents,
   });
 });
 
@@ -100,30 +92,10 @@ exports.createAgent = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.getAgentByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one agent is fetched",
-  });
-});
+const roleMapper = roleModelMapper["agent"];
 
-exports.updateAgentByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one agent is updated",
-  });
-});
-
-exports.deleteAgentByID = catchAsync(async (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    message: "one agent is delected",
-  });
-});
-
-exports.getMyInformation = (req, res, next) => {
-  return res.status(200).json({
-    status: "success",
-    data: req.user,
-  });
-};
+exports.getAllAgents = factory.getAll(roleMapper);
+exports.getAgentByID = factory.getOne(roleMapper);
+exports.updateAgentByID = factory.updateOne(roleMapper);
+exports.deleteAgentByID = factory.deleteOne(roleMapper);
+exports.getMyInformation = factory.getMe();
