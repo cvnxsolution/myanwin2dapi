@@ -4,6 +4,7 @@ const roleConfig = require("../config/roleConfig");
 const mongoose = require("mongoose");
 const AuthAccount = require("../models/authAccountModel");
 const { signJWTToken } = require("../utils/jwtUtil");
+const factory = require("./handlerFactory");
 
 exports.login = catchAsync(async (req, res, next) => {
   // can login by email or id with password
@@ -131,12 +132,6 @@ exports.signUp = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.getAllAuthAccounts = catchAsync(async (req, res, next) => {
-  const authAccounts = await AuthAccount.find();
+const roleMapper = roleConfig["authAccount"];
 
-  return res.status(200).json({
-    status: "success",
-    message: "all authAccount are fetched",
-    authAccounts,
-  });
-});
+exports.getAllAuthAccounts = factory.getAll(roleMapper);
