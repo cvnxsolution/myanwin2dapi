@@ -5,7 +5,9 @@ dotenv.config({ path: `${__dirname}/.env` });
 const app = require("./app");
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://127.0.0.1:27017/myanwin2d").then(() => {
+const Database = process.env.Database;
+
+mongoose.connect(Database).then(() => {
   console.log("db connected");
 });
 
