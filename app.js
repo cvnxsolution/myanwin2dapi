@@ -23,6 +23,14 @@ app.use("/api/v1/agent", agentRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/bet", betRoute);
 
+
+app.all('/', (req, res, next) => {
+    res.status(404).json({
+        message: "This is not public api, cannot be used outside of the app, myanwin2d",
+        instruction: "you can download the app from, https://github.com/cvnxsolution/myanwin2d repository"
+    })
+})
+
 app.use(globalErrorHandler);
 
 module.exports = app;
