@@ -7,11 +7,15 @@ const { restrictTo } = require("../middlewares/restrictTo");
 
 router.use(isAuthenticated);
 
+router.get("/me", isAuthenticated, agentController.getMyInformation);
+
 router.post(
   "/deposit",
   restrictTo("only agents are allowed", "agent"),
   agentController.deposit
 );
+
+
 
 router
   .route("/")
@@ -39,6 +43,5 @@ router
     agentController.updateAgentByID
   );
 
-router.route("/me", isAuthenticated, agentController.getMyInformation);
 
 module.exports = router;
