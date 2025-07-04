@@ -5,6 +5,8 @@ const { isAuthenticated } = require("../middlewares/isAuthenticated");
 const { restrictTo } = require("../middlewares/restrictTo");
 
 router.use(isAuthenticated);
+router.route("/me").get(isAuthenticated, userController.getMyInformation);
+
 
 router
   .route("/")
@@ -28,6 +30,7 @@ router
     userController.updateUserByID
   );
 
-router.route("/me").get(isAuthenticated, userController.getMyInformation);
+
+
 
 module.exports = router;
