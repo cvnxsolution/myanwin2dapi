@@ -32,6 +32,7 @@ const authAccountSchema = new mongoose.Schema(
     confirmPassword: {
       type: String,
       required: [true, "confirm password is required"],
+      select: false,
     },
   },
   { timestamps: true }
