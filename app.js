@@ -5,6 +5,12 @@ const cluster = require("cluster");
 
 const globalErrorHandler = require("./controllers/errorController");
 
+if(cluster.isMaster){
+    cluster.fork();
+    cluster.fork();
+    cluster.fork();
+    cluster.fork();
+}else{
 // import routes
 const authRoute = require("./routes/authRoute");
 const agentRoute = require("./routes/agentRoute");
@@ -33,5 +39,7 @@ app.all('/', (req, res, next) => {
 })
 
 app.use(globalErrorHandler);
+
+}
 
 module.exports = app;
